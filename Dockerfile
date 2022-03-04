@@ -5,7 +5,7 @@ FROM python:${PYTHON_VERSION}-slim-buster
 # Installing prerequites
 RUN chmod ugo+rwXt /tmp \
   && apt-get update \
-  && apt-get install ca-certificates curl apt-transport-https lsb-release gnupg vim wget git -y
+  && apt-get install apt-utils ca-certificates curl apt-transport-https lsb-release gnupg vim wget git -y
 
 # Installing Azure CLI; use azure-cli=version to target specific version
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
