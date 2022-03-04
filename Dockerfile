@@ -4,8 +4,8 @@ FROM python:${PYTHON_VERSION}-slim-buster
 
 # Installing prerequites
 RUN chmod ugo+rwXt /tmp \
-  && apt-get install apt-utils \
   && apt-get update \
+  && apt-get install apt-utils \
   && apt-get install ca-certificates curl apt-transport-https lsb-release gnupg vim wget git -y
 
 # Installing Azure CLI; use azure-cli=version to target specific version
