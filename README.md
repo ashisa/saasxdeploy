@@ -3,7 +3,7 @@
 
  ##
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/ashisa/saasxdeploy/main/mainTemplate.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fashisa%2Fsaasxdeploy%2Fmain%2FmainTemplate.json)
 
 ## How to Deploy
 
