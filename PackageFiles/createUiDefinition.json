@@ -97,9 +97,7 @@
       "ManagedIdentityResourceGroup": "[basics('ManagedIdentityResourceGroup')]",
       "ManagedIdentityName": "[basics('ManagedIdentityName')]",
       "WebAppNamePrefix": "[basics('WebAppNamePrefix')]",
-      "PublisherAdminUsers": "[basics('PublisherAdminUsers')]",
-      "SqlAdminLoginPassword": "[basics('SqlAdminLoginPassword')]",
-      "expDate": "[basics('expDate')]"
+      "PublisherAdminUsers": "[basics('PublisherAdminUsers')]"
     },
     "resourceTypes": [
       "Microsoft.Sql/servers",
