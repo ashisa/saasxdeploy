@@ -1,0 +1,131 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "config": {
+      "isWizard": false,
+      "basics": {
+        "description": "<h3>SaaS Accelerator Solution Template</h3><p>This solution template deploys and configures the **SaaS Accelerator** to help you create transactable SaaS offers in Azure Marketplace and/or AppSource.</p><p>The **SaaS Accelerator** provides a fully functional community-led SaaS reference implementation for those interested in publishing transactable SaaS offers in Microsoft's marketplace in hours instead of days. This series of video modules and hands-on labs is designed to help you understand, install, use, and customize the [SaaS Accelerator](https://microsoft.github.io/Mastering-the-Marketplace/saas-accelerator/) project.</p><h4>Prerequisites:</h4>",
+        "subscription": {
+          "constraints": {
+            "validations": [
+              {
+                "permission": "Microsoft.Sql/servers/write",
+                "message": "Must have write permission for the Sql Servers."
+              },
+              {
+                "permission": "Microsoft.KeyVault/vaults/write",
+                "message": "Must have write permission for Azure KeyVaults."
+              },
+              {
+                "permission": "Microsoft.Web/serverfarms/Write",
+                "message": "Must have write permission for Azure App Service."
+              }
+            ]
+          },
+          "resourceProviders": ["Microsoft.Sql"]
+        },
+        "resourceGroup": {
+          "constraints": {},
+          "allowExisting": true
+        },
+        "Location": {
+          "label": "Deployment Location",
+          "toolTip": "Please select location where SaaS Accelerator resources will be deployed",
+          "visible": true
+        }
+      }
+    },
+    "basics": [
+      {
+        "name": "ManagedIdentityName",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Managed Identity Name",
+        "placeholder": "",
+        "defaultValue": "",
+        "toolTip": "Please enter the name of the managed identity you created as mentioned above.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,30}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "ManagedIdentityResourceGroup",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Resource Group Name for Managed Identity",
+        "placeholder": "",
+        "defaultValue": "resourceGroup().name",
+        "toolTip": "Please enter the name of the resource group where the managed identity was created. Leave the default if same as the resource group where the SaaS Accelerator is being deployed.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,30}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "WebAppNamePrefix",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Web App Prefix",
+        "placeholder": "",
+        "defaultValue": "",
+        "toolTip": "Please enter a prefix for web apps. This will be used for the landing page and the publisher portal, for example, prefix-portal and prefix-admin. Please ensure it is globally unique.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,23}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-23 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "PublisherAdminUsers",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Publisher Email ID",
+        "placeholder": "",
+        "defaultValue": "",
+        "toolTip": "Please enter the email of the Partner Center user who has permissions to create the SaaS Offer in the Partner Center.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+          "validationMessage": "Please enter a valid email ID."
+        },
+        "visible": true
+      },
+      {
+        "name": "SqlAdminLoginPassword",
+        "type": "Microsoft.Common.PasswordBox",
+        "label": {
+          "password": "SQL Admin Login Password",
+          "confirmPassword": "Confirm password"
+        },
+        "toolTip": "",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-zA-Z0-9]{8,}$",
+          "validationMessage": "Password must be at least 8 characters long, contain only numbers and letters"
+        },
+        "options": {
+          "hideConfirmation": true
+        },
+        "visible": true
+      }
+    ],
+    "steps": [],
+    "outputs": {
+      "Location": "[location()]",
+      "resourceGroup": "[resourceGroup().name]",
+      "ManagedIdentityResourceGroup": "[ManagedIdentityResourceGroup]",
+      "ManagedIdentityName": "[basics('ManagedIdentityName')]",
+      "WebAppNamePrefix": "[basics('WebAppNamePrefix')]",
+      "PublisherAdminUsers": "[basics('PublisherAdminUsers')]",
+      "SqlAdminLoginPassword": "[basics('SqlAdminLoginPassword')]"
+    },
+    "resourceTypes": [
+      "Microsoft.Sql/servers",
+      "Microsoft.ContainerInstance/containerGroups"
+    ]
+  }
+}

@@ -8,6 +8,12 @@
                 "description": "Location to create the Azure resources in"
             }
         },
+        "resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group where the SaaS Accelerator resources will be deployed"
+            }
+        },
         "ManagedIdentityName": {
             "type": "string",
             "metadata": {
@@ -26,28 +32,6 @@
                 "description": "Prefix used for creating web applications"
             }
         },
-        "ADApplicationID": {
-            "type": "string",
-            "metadata": {
-                "description": "The value should match the value provided for Active Directory Application ID in the Technical Configuration of the Transactable Offer in Partner Center"
-            }
-        },
-        "ADApplicationSecret": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Secret key of the AD Application"
-            }
-        },
-        "ADMTApplicationID": {
-            "type": "string",
-            "metadata": {
-                "description": "The value should match the value provided for Single Tenant Active Directory Application ID in the Technical Configuration of the Transactable Offer in Partner Center"
-            }
-        },
-        "SqlAdminLoginPassword": {
-            "type": "securestring",
-            "defaultValue": "[newGuid()]"
-        },
         "PublisherAdminUsers": {
             "type": "string",
             "metadata": {
@@ -55,26 +39,14 @@
             },
             "defaultValue": ""
         },
-        "AadSqlAdminUsers": {
-            "type": "string",
-            "metadata": {
-                "description": "AAD SQL Admin User"
-            },
-            "defaultValue": ""
-        },
-        "AadAdminObjectId": {
-            "type": "string",
-            "metadata": {
-                "description": "AAD SQL Admin User Object ID"
-            },
-            "defaultValue": ""
-        },
-        "expDate": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P2Y'))]"
+        "SqlAdminLoginPassword": {
+            "type": "securestring",
+            "defaultValue": "[newGuid()]"
         }
     },
     "variables": {
+        "expDate": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P2Y'))]",
+        "resourceGroup": "[parameters('resourceGroup')]",
         "alwaysOn": true,
         "skuCode": "B1",
         "AdAuthenticationEndPoint": "[environment().authentication.loginEndpoint]",
@@ -82,7 +54,6 @@
         "customerPortalAppName": "[concat(parameters('webAppNamePrefix'),'-portal')]",
         "adminPortalAppName": "[concat(parameters('webAppNamePrefix'),'-admin')]",
         "fulFillmentAPIBaseURL": "https://marketplaceapi.microsoft.com/api",
-        "adminPortalRedirectURI1": "[concat('https://', variables('adminPortalAppName'), '.azurewebsites.net')]",
         "adminPortalRedirectURI2": "[concat('https://', variables('adminPortalAppName'), '.azurewebsites.net/Home/Index')]",
         "customerPortalRedirectURI1": "[concat('https://', variables('customerPortalAppName'), '.azurewebsites.net')]",
         "customerPortalRedirectURI2": "[concat('https://', variables('customerPortalAppName'), '.azurewebsites.net/Home/Index')]",
@@ -135,7 +106,7 @@
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
             "name": "[variables('scriptName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "kind": "AzurePowerShell",
             "identity": {
                 "type": "UserAssigned",
@@ -520,7 +491,7 @@
                 "value": "[split(reference(variables('scriptName')).outputs.text, '#')[1]]",
                 "attributes": {
                     "enabled": true,
-                    "exp": "[parameters('expDate')]"
+                    "exp": "[variables('expDate')]"
                 }
             },
             "dependsOn": [
@@ -535,7 +506,7 @@
                 "value": "[variables('defaultConnectionSecret')]",
                 "attributes": {
                     "enabled": true,
-                    "exp": "[parameters('expDate')]"
+                    "exp": "[variables('expDate')]"
                 }
             },
             "dependsOn": [
@@ -622,35 +593,19 @@
         }
     ],
     "outputs": {
-        "AddTo_MTAppReg_RedirectURL_For_CustomerPortal1": {
+        "saas_offer_Landing_Page_URL": {
             "type": "string",
             "value": "[variables('customerPortalRedirectURI1')]"
         },
-        "AddTo_MTAppReg_RedirectURL_For_CustomerPortal2": {
-            "type": "string",
-            "value": "[variables('customerPortalRedirectURI2')]"
-        },
-        "AddTo_MTAppReg_RedirectURL_For_AdminPortal1": {
-            "type": "string",
-            "value": "[variables('adminPortalRedirectURI1')]"
-        },
-        "AddTo_MTAppReg_RedirectURL_For_AdminPortal2": {
-            "type": "string",
-            "value": "[variables('adminPortalRedirectURI2')]"
-        },
-        "AddTo_SaaSOffer_TechConfig_LandingPageURL": {
-            "type": "string",
-            "value": "[variables('customerPortalRedirectURI1')]"
-        },
-        "AddTo_SaaSOffer_TechConfig_Webhook": {
+        "saas_offer_Connection_Webhook_URL": {
             "type": "string",
             "value": "[variables('webhook')]"
         },
-        "AddTo_SaaSOffer_TechConfig_TenantId": {
+        "saas_offer_Microsoft_Entra_Tenant_ID": {
             "type": "string",
             "value": "[tenant().tenantId]"
         },
-        "AddTo_SaaSOffer_TechConfig_ApplicationId": {
+        "saas_offer_Microsoft_Entra_Application_ID": {
             "type": "string",
             "value": "[split(reference(variables('scriptName')).outputs.text, '#')[0]]"
         }

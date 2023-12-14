@@ -1,0 +1,109 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "config": {
+      "isWizard": false,
+      "basics": {
+        "description": "<h3>SaaS Accelerator Solution Template</h3>This solution template deploys and configures the [SaaS Accelerator](https://microsoft.github.io/Mastering-the-Marketplace/saas-accelerator/) to help you create transactable SaaS offers in Azure Marketplace and/or AppSource.<h4>Prerequisites:</h4><ol>    <li>Create a user assigned managed identity using PowerShell -<h4>`New-AzResourceGroup -Name <ResourceGroupName> -Location <Location>`<br>`New-AzUserAssignedIdentity -ResourceGroupName <ResourceGroupName> -Name <IdentityName>`</h4>    </li>    <em>**Note**: Please make a note of the **name** of the managed identity and enter that in the **Managed Identity Name** text box below.</em><p>    <li>Assign the Application Administrator role to this managed identity using Microsoft Entra -</li>    <ol>        <li>Navigate to **Roles and administrators** in **Microsoft Entra Admin Center** at https://entra.microsoft.com/#view/Microsoft_AAD_IAM/RolesManagementMenuBlade/~/AllRoles</li>        <li>Click on **Application Administrator** role in the list</li>        <li>Click on **Add Assignments**</li>        <li>In the Search box, type the name of the identity created in the first step</li>        <li>Select the managed identity in the search results and click on the **Add** button</li>    </ol></ol><em>**Note**: You can create the managed identity in a separate resource group which can be deleted after the deployment since this managed identity and the resource group will not be needed after the deployment.</em><p>",
+        "subscription": {
+          "constraints": {
+            "validations": [
+              {
+                "permission": "Microsoft.Sql/servers/write",
+                "message": "Must have write permission for the Sql Servers."
+              },
+              {
+                "permission": "Microsoft.KeyVault/vaults/write",
+                "message": "Must have write permission for Azure KeyVaults."
+              },
+              {
+                "permission": "Microsoft.Web/serverfarms/Write",
+                "message": "Must have write permission for Azure App Service."
+              }
+            ]
+          },
+          "resourceProviders": ["Microsoft.Sql"]
+        },
+        "resourceGroup": {
+          "allowExisting": true
+        },
+        "location": {
+          "label": "Deployment Location",
+          "toolTip": "Please select location where SaaS Accelerator resources will be deployed",
+          "visible": true
+        }
+      }
+    },
+    "basics": [
+      {
+        "name": "ManagedIdentityName",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Managed Identity Name",
+        "defaultValue": "",
+        "toolTip": "Please enter the name of the managed identity you created as mentioned above.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,30}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "ManagedIdentityResourceGroup",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Resource Group Name for Managed Identity",
+        "defaultValue": "",
+        "toolTip": "Please enter the name of the resource group where the managed identity was created",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,30}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "WebAppNamePrefix",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Web App Prefix",
+        "defaultValue": "",
+        "toolTip": "Please enter a prefix for web apps. This will be used for the landing page and the publisher portal, for example, prefix-portal and prefix-admin. Please ensure it is globally unique.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,23}$",
+          "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-23 characters long."
+        },
+        "visible": true
+      },
+      {
+        "name": "PublisherAdminUsers",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Publisher Email ID",
+        "defaultValue": "",
+        "toolTip": "Please enter the emails, separated by comma, of the Partner Center users who have permission to create SaaS Offers in the Partner Center.",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+          "validationMessage": "Please enter a valid email ID."
+        },
+        "visible": true
+      }
+    ],
+    "steps": [],
+    "outputs": {
+      "Location": "[location()]",
+      "resourceGroup": "[resourceGroup().name]",
+      "ManagedIdentityResourceGroup": "[basics('ManagedIdentityResourceGroup')]",
+      "ManagedIdentityName": "[basics('ManagedIdentityName')]",
+      "WebAppNamePrefix": "[basics('WebAppNamePrefix')]",
+      "PublisherAdminUsers": "[basics('PublisherAdminUsers')]",
+      "SqlAdminLoginPassword": "[basics('SqlAdminLoginPassword')]",
+      "expDate": "[basics('expDate')]"
+    },
+    "resourceTypes": [
+      "Microsoft.Sql/servers",
+      "Microsoft.ContainerInstance/containerGroups"
+    ]
+  }
+}
